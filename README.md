@@ -90,6 +90,10 @@ Main files: `index.html` contains the page structure, `style.css` its design,
 `app.js` the application and game logic, and `supabase-setup.sql` the database
 schema and security policies.
 
+### Contributors
+
+- [Alexanderrr9414](https://github.com/Alexanderrr9414) — project creator and maintainer.
+
 ### Credits and licenses
 
 - **Pong:** based on [`jakesgordon/javascript-pong`](https://github.com/jakesgordon/javascript-pong)
@@ -193,6 +197,10 @@ clave `service_role` en este proyecto.
 Archivos principales: `index.html` contiene la estructura de la página,
 `style.css` su diseño, `app.js` la aplicación y la lógica de los juegos, y
 `supabase-setup.sql` el esquema y las políticas de seguridad de la base de datos.
+
+### Contribuidores
+
+- [Alexanderrr9414](https://github.com/Alexanderrr9414) — creador y responsable del proyecto.
 
 ### Créditos y licencias
 
