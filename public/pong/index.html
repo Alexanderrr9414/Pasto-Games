@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pong | Pasto Games</title>
+  <link href="pong.css" rel="stylesheet">
+</head>
+<body>
+  <main class="pong-page">
+    <h1>Pong</h1>
+    <p>El primero en llegar a 9 puntos gana.</p>
+    <div class="pong-options">
+      <button id="single-player">Jugar contra el ordenador</button>
+      <button id="two-players">Dos jugadores</button>
+    </div>
+    <canvas id="game" aria-label="Partida de Pong">
+      Tu navegador no puede mostrar este juego.
+    </canvas>
+    <p class="pong-controls">
+      Un jugador: <strong>Q</strong> y <strong>A</strong>. Dos jugadores:
+      jugador 1 con <strong>Q</strong> y <strong>A</strong>, jugador 2 con
+      <strong>P</strong> y <strong>L</strong>. Pulsa <strong>Esc</strong> para salir.
+    </p>
+  </main>
+
+  <script src="game.js"></script>
+  <script src="pong.js"></script>
+  <script>
+    Game.ready(function() {
+      var pong = Game.start("game", Pong, {
+        sound: false,
+        stats: false,
+        footprints: false,
+        predictions: false
+      });
+
+      document.getElementById("single-player").addEventListener("click", function() {
+        pong.startSinglePlayer();
+      });
+      document.getElementById("two-players").addEventListener("click", function() {
+        pong.startDoublePlayer();
+      });
+    });
+  </script>
+</body>
+</html>

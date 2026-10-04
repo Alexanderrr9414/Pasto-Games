@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Juegos sencillos para jugar directamente en el navegador.">
+    <link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
+    <script>
+      if (localStorage.getItem("pasto-theme") === "dark") {
+        document.documentElement.dataset.theme = "dark";
+      }
+      document.documentElement.dataset.background = "animated";
+    </script>
+    <link rel="stylesheet" href="./style.css">
+    <title>Pasto Games</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="logo" href="#/">Pasto <span>Games</span></a>
+      <span class="header-note">Juega y disfruta</span>
+      <div class="header-actions">
+        <button class="theme-button" id="theme-toggle" type="button" aria-pressed="false">
+          <span aria-hidden="true">🌙</span>
+          <span id="theme-label">Modo oscuro</span>
+        </button>
+        <div class="profile-menu-wrap">
+          <button class="profile-trigger" id="profile-trigger" type="button"
+            aria-label="Abrir menú de perfil" aria-expanded="false" aria-controls="profile-menu">
+            <span class="avatar-fallback" id="header-avatar-fallback" aria-hidden="true">👤</span>
+            <img class="header-avatar" id="header-avatar" alt="" hidden>
+          </button>
+          <div class="profile-menu" id="profile-menu" hidden></div>
+        </div>
+      </div>
+    </header>
+    <script>
+      const themeButton = document.querySelector("#theme-toggle");
+      const themeLabel = document.querySelector("#theme-label");
+      const themeIcon = themeButton.querySelector("[aria-hidden='true']");
+
+      function updateThemeButton() {
+        const isDark = document.documentElement.dataset.theme === "dark";
+        themeButton.setAttribute("aria-pressed", String(isDark));
+        themeLabel.textContent = isDark ? "Modo claro" : "Modo oscuro";
+        themeIcon.textContent = isDark ? "☀️" : "🌙";
+      }
+
+      themeButton.addEventListener("click", () => {
+        const isDark = document.documentElement.dataset.theme !== "dark";
+        document.documentElement.dataset.theme = isDark ? "dark" : "light";
+        localStorage.setItem("pasto-theme", isDark ? "dark" : "light");
+        updateThemeButton();
+      });
+
+      updateThemeButton();
+    </script>
+
+    <main id="app">
+      <!-- Este contenido inicial también se ve si el JavaScript todavía no carga. -->
+      <section class="welcome">
+        <p class="eyebrow">Un pequeño salón de juegos</p>
+        <h1>Elige algo para jugar.</h1>
+        <p class="intro">Unos juegos sencillos y gratis. ¿Cuál te apetece?</p>
+      </section>
+
+      <div class="login-layout">
+        <section class="account-panel" id="account-panel" aria-label="Acceso a tu cuenta">
+          <h2>Iniciar sesión</h2>
+          <form class="account-form" id="account-form">
+            <label for="account-email">Correo electrónico</label>
+            <input id="account-email" name="email" type="email" autocomplete="email" required>
+            <label for="account-password">Contraseña</label>
+            <input id="account-password" name="password" type="password" autocomplete="current-password" required>
+            <button class="primary-button" type="submit">Entrar</button>
+            <p class="account-message" id="account-message" aria-live="polite">
+              Para activar el registro, configura .env.local y abre el portal con npm run dev.
+            </p>
+          </form>
+          <button class="text-button" id="change-login-mode" type="button">Quiero crear una cuenta</button>
+        </section>
+        <aside class="login-art">
+          <img src="./public/images/login-controller-neon.jpg"
+            alt="Consola y mandos de videojuegos" fetchpriority="high">
+        </aside>
+      </div>
+
+      <h2 class="section-title">Tus juegos</h2>
+      <p class="page-message">Inicia sesión para ver los juegos que tienes asignados.</p>
+    </main>
+
+    <footer class="site-footer">Esta pagina web ha sido desarrollada por Pasto</footer>
+    <dialog class="profile-dialog" id="profile-dialog" aria-labelledby="profile-title">
+      <form class="profile-form" id="profile-form">
+        <div class="profile-dialog-heading">
+          <div>
+            <p class="eyebrow">Tu cuenta</p>
+            <h2 id="profile-title">Editar perfil</h2>
+          </div>
+          <button class="dialog-close" id="profile-close" type="button" aria-label="Cerrar">×</button>
+        </div>
+
+        <div class="avatar-editor">
+          <div class="avatar-preview" id="avatar-preview">
+            <span id="avatar-preview-fallback" aria-hidden="true">👤</span>
+            <img id="avatar-preview-image" alt="Vista previa de tu foto" hidden>
+          </div>
+          <label class="secondary-button avatar-pick" for="avatar-file">Cambiar foto</label>
+          <input id="avatar-file" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp">
+          <p class="field-help">PNG, JPG o WebP. Máximo 2 MB.</p>
+        </div>
+
+        <label for="profile-name">Nombre</label>
+        <input id="profile-name" name="name" type="text" autocomplete="name"
+          minlength="2" maxlength="80" required>
+
+        <label for="profile-password">Nueva contraseña</label>
+        <input id="profile-password" name="password" type="password"
+          autocomplete="new-password" minlength="8">
+        <p class="field-help">Déjalo vacío si no quieres cambiarla.</p>
+
+        <p class="account-message" id="profile-message" aria-live="polite"></p>
+        <div class="profile-dialog-actions">
+          <button class="secondary-button" id="profile-cancel" type="button">Cancelar</button>
+          <button class="primary-button" type="submit">Guardar cambios</button>
+        </div>
+      </form>
+    </dialog>
+    <script>
+      // Permite ver y probar el panel aunque abras este archivo sin iniciar Vite.
+      const accountForm = document.querySelector("#account-form");
+      const accountPanel = document.querySelector("#account-panel");
+      const accountSwitch = document.querySelector("#change-login-mode");
+      let showingRegistration = false;
+
+      accountForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        document.querySelector("#account-message").textContent =
+          "El acceso real necesita configurar Supabase. Consulta los pasos de README.md.";
+      });
+
+      accountSwitch.addEventListener("click", () => {
+        showingRegistration = !showingRegistration;
+        accountPanel.querySelector("h2").textContent =
+          showingRegistration ? "Crear una cuenta" : "Iniciar sesión";
+        const nameInput = accountForm.querySelector("#account-name");
+        if (showingRegistration && !nameInput) {
+          const label = document.createElement("label");
+          label.htmlFor = "account-name";
+          label.textContent = "Tu nombre";
+          const input = document.createElement("input");
+          input.id = "account-name";
+          input.name = "name";
+          input.type = "text";
+          input.autocomplete = "name";
+          input.minLength = 2;
+          input.maxLength = 80;
+          input.required = true;
+          accountForm.prepend(input);
+          accountForm.prepend(label);
+        } else if (!showingRegistration && nameInput) {
+          nameInput.previousElementSibling.remove();
+          nameInput.remove();
+        }
+        accountForm.querySelector("button[type='submit']").textContent =
+          showingRegistration ? "Crear cuenta" : "Entrar";
+        accountForm.querySelector("#account-password").autocomplete =
+          showingRegistration ? "new-password" : "current-password";
+        accountSwitch.textContent =
+          showingRegistration ? "Ya tengo una cuenta" : "Quiero crear una cuenta";
+      });
+    </script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
